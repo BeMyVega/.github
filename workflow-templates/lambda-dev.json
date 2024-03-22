@@ -1,0 +1,12 @@
+{
+    "name": "Lambda Pipeline",
+    "description": "Lambda pipeline to deploy to Dev environment",
+    "iconName": "octicon code",
+    "categories": [
+        "Python"
+    ],
+    "filePatterns": [
+        ".*\\.py$",
+        ".*\\.md$"
+    ]
+}
