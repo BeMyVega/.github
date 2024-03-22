@@ -4,9 +4,5 @@
     "iconName": "octicon code",
     "categories": [
         "Python"
-    ],
-    "filePatterns": [
-        ".*\\.py$",
-        ".*\\.md$"
     ]
 }
