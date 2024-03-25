@@ -1,5 +1,5 @@
 {
-    "name": "Lambda Pipeline",
+    "name": "Lambda Pipeline Dev",
     "description": "Lambda pipeline to deploy to Dev environment",
     "iconName": "octicon code",
     "categories": [

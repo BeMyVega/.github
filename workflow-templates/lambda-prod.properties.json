@@ -1,6 +1,6 @@
 {
-    "name": "Lambda Pipeline",
-    "description": "Lambda pipeline to deploy to Dev environment",
+    "name": "Lambda Pipeline Prod",
+    "description": "Lambda pipeline to deploy to Prod environment",
     "iconName": "octicon code",
     "categories": [
         "Python"
