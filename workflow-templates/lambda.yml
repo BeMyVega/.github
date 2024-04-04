@@ -1,0 +1,54 @@
+name: Lambda CI/CD
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Deployment environment'
+        required: true
+        default: 'dev'
+        type: string
+        options:
+          - dev
+          - prod
+
+env:
+  BUCKET_NAME_DEV: # Name of the dev bucket
+  BUCKET_NAME_PROD: # Name of the prod bucket
+  S3_KEY_DEV: # Key of the zip package in dev bucket
+  S3_KEY_PROD: # Key of the zip package in prod bucket
+  LAMBDA_NAME_DEV: # Name of lambda function in dev environment
+  LAMBDA_NAME_PROD: # Name of lambda function in prod environment
+  PACKAGE_NAME_DEV: # Name of the zip file for dev
+  PACKAGE_NAME_PROD: # Name of the zip file for prod
+  AWS_REGION: # AWS Region (usually is just eu-west-1, which is Ireland)
+  AWS_ACCOUNT_ID_DEV: # ID of the Dev account
+  AWS_ACCOUNT_ID_PROD: # ID of the Prod account
+
+jobs:
+  deploy:
+    name: Upload to Amazon S3 and Update Lambda
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Zip Folder
+        run: zip -r ${{ env.PACKAGE_NAME_${{ github.event_name == 'push' ? 'DEV' : 'PROD' }}} lambda_function.py
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::${{ github.event_name == 'push' ? env.AWS_ACCOUNT_ID_DEV : env.AWS_ACCOUNT_ID_PROD }}:role/github-access-control-identity-provider-role-widget
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Copy files to the S3 bucket
+        run: |
+          aws s3 cp ${{ env.PACKAGE_NAME_${{ github.event_name == 'push' ? 'DEV' : 'PROD' }}} s3://${{ env.BUCKET_NAME_${{ github.event_name == 'push' ? 'DEV' : 'PROD' }}}/${{ env.S3_KEY_${{ github.event_name == 'push' ? 'DEV' : 'PROD' }}}}
+
+      - name: Update the code in lambda
+        run: |
+          aws lambda update-function-code --function-name ${{ env.LAMBDA_NAME_${{ github.event_name == 'push' ? 'DEV' : 'PROD' }}} --s3-bucket ${{ env.BUCKET_NAME_${{ github.event_name == 'push' ? 'DEV' : 'PROD' }}} --s3-key ${{ env.S3_KEY_${{ github.event_name == 'push' ? 'DEV' : 'PROD' }}}}
