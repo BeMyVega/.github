@@ -16,8 +16,8 @@ on:
           - prod
 
 env:
-  BUCKET_NAME_DEV: ${{ secrets.bucket_dev }} # Name of the dev bucket
-  BUCKET_NAME_PROD: ${{ secrets.bucket_prod }} # Name of the prod bucket
+  BUCKET_NAME_DEV: ${{ secrets.bucket_dev }} # Name of the dev bucket. MUST BE ADDED AS A SECRET
+  BUCKET_NAME_PROD: ${{ secrets.bucket_prod }} # Name of the prod bucket. MUST BE ADDED AS A SECRET
   S3_KEY_DEV: # Key of the zip package in dev bucket
   S3_KEY_PROD: # Key of the zip package in prod bucket
   LAMBDA_NAME_DEV: # Name of lambda function in dev environment
@@ -25,8 +25,8 @@ env:
   PACKAGE_NAME_DEV: # Name of the zip file for dev
   PACKAGE_NAME_PROD: # Name of the zip file for prod
   AWS_REGION: # AWS Region (usually is just eu-west-1, which is Ireland)
-  AWS_ACCOUNT_ID_DEV: ${{ secrets.account_dev }} # ID of the Dev account
-  AWS_ACCOUNT_ID_PROD: ${{ secrets.account_prod }} # ID of the Prod account
+  AWS_ACCOUNT_ID_DEV: ${{ secrets.account_dev }} # ID of the Dev account. MUST BE ADDED AS A SECRET
+  AWS_ACCOUNT_ID_PROD: ${{ secrets.account_prod }} # ID of the Prod account. MUST BE ADDED AS A SECRET
 
 jobs:
   deploy:
