@@ -63,6 +63,5 @@ jobs:
       - name: Update the code in lambda
         run: |
           aws lambda update-function-code --function-name ${{ (github.event_name == 'push') && env.LAMBDA_NAME_DEV || env.LAMBDA_NAME_PROD }} --s3-bucket ${{ (github.event_name == 'push') && env.BUCKET_NAME_DEV || env.BUCKET_NAME_PROD }} --s3-key ${{ (github.event_name == 'push') && env.S3_KEY_DEV || env.S3_KEY_PROD }}
-          aws lambda update-function-code --function-name ${{ env.LAMBDA_NAME_${{ github.event_name == 'push' ? 'DEV' : 'PROD' }}} --s3-bucket ${{ env.BUCKET_NAME_${{ github.event_name == 'push' ? 'DEV' : 'PROD' }}} --s3-key ${{ env.S3_KEY_${{ github.event_name == 'push' ? 'DEV' : 'PROD' }}}}
        #  aws lambda publish-layer-version --layer-name ${{ env.LAMBDA_LAYER_NAME }} --description ${{ env.LAMBDA_LAYER_DESCRIPTION }} --content S3Bucket=${{ env.BUCKET_NAME }},S3Key=${{ env.LAMBDA_LAYER_S3_KEY }} --compatible-runtimes python3.11
        #  LATEST_LAYER_ARN=$(aws lambda list-layer-versions --layer-name ${{ env.LAMBDA_LAYER_NAME }} --query 'LayerVersions[0].LayerVersionArn' --region ${{ env.AWS_REGION }} --output text)
