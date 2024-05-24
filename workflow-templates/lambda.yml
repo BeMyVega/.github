@@ -42,7 +42,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Zip Folder
+      - name: Zip Folder # Creates the package for dev or prod based on the env variable
         run: |
           if [ "${{ github.event_name == 'push' }}" ]; then
             zip -r ${{ env.PACKAGE_NAME_DEV }} lambda_function.py
@@ -50,18 +50,18 @@ jobs:
             zip -r ${{ env.PACKAGE_NAME_PROD }} lambda_function.py
           fi
 
-      - name: Configure AWS credentials
+      - name: Configure AWS credentials # Generate credentials in STS to deploy lambdas
         uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: arn:aws:iam::${{ (github.event_name == 'push') && env.AWS_ACCOUNT_ID_DEV || env.AWS_ACCOUNT_ID_PROD }}:role/github-access-control-identity-provider-role-widget
           aws-region: ${{ env.AWS_REGION }}
 
-      - name: Copy files to the S3 bucket
+      - name: Copy files to the S3 bucket #Deploys the new code to S3
         run: |
           aws s3 cp ${{ (github.event_name == 'push') && env.PACKAGE_NAME_DEV || env.PACKAGE_NAME_PROD }} s3://${{ (github.event_name == 'push') && env.BUCKET_NAME_DEV || env.BUCKET_NAME_PROD }}/${{ (github.event_name == 'push') && env.S3_KEY_DEV || env.S3_KEY_PROD }}
 
       - name: Update the code in lambda
         run: |
-          aws lambda update-function-code --function-name ${{ (github.event_name == 'push') && env.LAMBDA_NAME_DEV || env.LAMBDA_NAME_PROD }} --s3-bucket ${{ (github.event_name == 'push') && env.BUCKET_NAME_DEV || env.BUCKET_NAME_PROD }} --s3-key ${{ (github.event_name == 'push') && env.S3_KEY_DEV || env.S3_KEY_PROD }}
+          aws lambda update-function-code --function-name ${{ (github.event_name == 'push') && env.LAMBDA_NAME_DEV || env.LAMBDA_NAME_PROD }} --s3-bucket ${{ (github.event_name == 'push') && env.BUCKET_NAME_DEV || env.BUCKET_NAME_PROD }} --s3-key ${{ (github.event_name == 'push') && env.S3_KEY_DEV || env.S3_KEY_PROD }} #Deploys the new version of the lambda code
        #  aws lambda publish-layer-version --layer-name ${{ env.LAMBDA_LAYER_NAME }} --description ${{ env.LAMBDA_LAYER_DESCRIPTION }} --content S3Bucket=${{ env.BUCKET_NAME }},S3Key=${{ env.LAMBDA_LAYER_S3_KEY }} --compatible-runtimes python3.11
        #  LATEST_LAYER_ARN=$(aws lambda list-layer-versions --layer-name ${{ env.LAMBDA_LAYER_NAME }} --query 'LayerVersions[0].LayerVersionArn' --region ${{ env.AWS_REGION }} --output text)
