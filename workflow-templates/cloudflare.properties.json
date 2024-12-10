@@ -1,0 +1,12 @@
+{
+    "name": "Cloudflare Pages Deployment Pipeline",
+    "description": "This pipeline helps to deploy to cloudflare pages using tags instead of using cloudflare default CI/CD",
+    "iconName": "octicon code",
+    "categories": [
+        "Cloudflare"
+    ],
+    "filePatterns": [
+        ".*\\.js$",
+        ".*\\.md$"
+    ]
+}

@@ -1,0 +1,28 @@
+name: Cloudflare Pages Deployment CI/CD
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Deployment environment'
+        required: true
+        default: 'prod'
+        type: choice
+        options:
+          - dev
+          - prod
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    name: Deploy
+    permissions:
+      contents: read
+      deployments: write
+    steps:
+      - uses: actions/checkout@v4
+      - name: Deploy
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }} # You have to setup the secrets in the repository
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }} # You have to setup the secrets in the repository
+          command: pages deploy . --project-name=widget-webpack --branch main
