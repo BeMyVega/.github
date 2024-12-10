@@ -20,9 +20,18 @@ jobs:
       deployments: write
     steps:
       - uses: actions/checkout@v4
+      - name: Setup Node.js 
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20.x
+          cache: 'npm'    
+      - name: Install dependencies
+        run: npm install
+      - name: Build code
+        run: npm run build
       - name: Deploy
         uses: cloudflare/wrangler-action@v3
         with:
-          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }} # You have to setup the secrets in the repository
-          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }} # You have to setup the secrets in the repository
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }} # We must set these secrets in the settings tab of the repository
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }} # We must set these secrets in the settings tab of the repository
           command: pages deploy . --project-name=widget-webpack --branch main
